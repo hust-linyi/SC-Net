@@ -1,5 +1,5 @@
 # SC-Net
-This is the official code for our MICCAI 2023 paper:
+This is the official code for our MedIA paper:
 
 > [Nuclei Segmentation with Point Annotations from Pathology Images via Self-Supervised Learning and Co-Training](https://arxiv.org/abs/2202.08195) <br>
 > Yi Lin*, Zhiyong Qu*, Hao Chen, Zhongke Gao, Yuexiang Li, Lili Xia, Kai Ma, Yefeng Zheng, Kwang-Ting Cheng
@@ -11,7 +11,7 @@ In this work, we propose a weakly-supervised learning method for nuclei segmenta
 [comment]: <> ()
 ![visualization](figures/overview.png)
 <div align="center">
-Left: Overview of the CAT-NET; Right: The architecture of CMAT module.
+(a) The pipeline of the proposed method; (b) The framework of SC-Net; (c) The process of pseudo label generation. 
 </div> 
 
 ### Using the code
@@ -31,10 +31,10 @@ pip install -r requirements.txt
 2. **CPM**  [Computational Precision Medicine dataset](https://drive.google.com/drive/folders/1sJ4nmkif6j4s2FOGj8j6i_Ye7z9w0TfA)
 
 #### Pre-processing
-Please refer to 'dataloaders/prepare_data.py' for the pre-processing of the datasets.
+Please refer to [dataloaders/prepare_data.py](https://github.com/hust-linyi/SC-Net/blob/main/dataloaders/prepare_data.py) for the pre-processing of the datasets.
 
 ### Training
-1. Configure your own parameters in 'opinions.py', including the dataset path, the number of GPUs, the number of epochs, the batch size, the learning rate, etc.
+1. Configure your own parameters in [opinions.py](https://github.com/hust-linyi/SC-Net/blob/main/options.py), including the dataset path, the number of GPUs, the number of epochs, the batch size, the learning rate, etc.
 2. Run the following command to train the model:
 ```
 python train.py
