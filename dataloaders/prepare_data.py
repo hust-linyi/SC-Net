@@ -31,6 +31,9 @@ def main():
         data_list = json.load(file)
         train_list = data_list['train']
 
+    # ------ create H component image from original image
+    create_h_component_image(img_dir, label_Hcomponent_dir)
+
     # ------ create point label from instance label
     create_point_label_from_instance(label_instance_dir, label_point_dir, train_list)
 
@@ -47,12 +50,42 @@ def main():
     split_patches(label_cluster_dir, '{:s}/labels_cluster'.format(patch_folder), 'label_cluster')
     split_patches(label_Hcomponent_dir, '{:s}/labels_Hcomponent'.format(patch_folder), 'label_Hcomponent')
 
-
     # ------ divide dataset into train, val and test sets
     organize_data_for_training(data_dir, train_data_dir)
 
     # ------ compute mean and std
     compute_mean_std(data_dir, train_data_dir)
+
+
+def create_h_component_image(img_dir, save_dir):
+    image_list = os.listdir(img_dir)
+    N_total = len(image_list)
+    N_processed = 0
+
+    # define stain_matrix
+    H = np.array([0.650, 0.704, 0.286])
+    E = np.array([0.072, 0.990, 0.105])
+    R = np.array([0.268, 0.570, 0.776])
+    HDABtoRGB = [(H/np.linalg.norm(H)).tolist(), (E/np.linalg.norm(E)).tolist(), (R/np.linalg.norm(R)).tolist()]
+    stain_matrix = HDABtoRGB
+    im_inv = np.linalg.inv(stain_matrix)
+
+    for image_name in image_list:
+        N_processed += 1
+        flag = '' if N_processed < N_total else '\n'
+        print('\r\t{:d}/{:d}'.format(N_processed, N_total), end=flag)
+
+        image_path = os.path.join(img_dir, image_name)
+        image = imageio.imread(image_path)
+        
+        # transform 
+        im_temp = (-255)*np.log((np.float64(image)+1)/255)/np.log(255)
+        image_out = np.reshape(np.dot(np.reshape(im_temp, [-1,3]), im_inv), np.shape(image))
+        image_out = np.exp((255-image_out)*np.log(255)/255)
+        image_out[image_out > 255] = 255
+        image_h = image_out[:, :, 0].astype(np.uint8)
+
+        imageio.imsave('{:s}/{:s}_h.png'.format(save_dir, image_name[:-4]), image_h)
 
 
 def create_point_label_from_instance(data_dir, save_dir, train_list):
